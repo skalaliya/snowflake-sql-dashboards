@@ -1,8 +1,350 @@
-.venv/
-__pycache__/
-*.pyc
+# ============================================================================
+# Snowflake SQL Dashboards - Comprehensive .gitignore
+# ============================================================================
+# Prevents sensitive data, temporary files, and environment-specific content
+# from being committed to version control.
+
+# ============================================================================
+# 🔐 SECURITY & CREDENTIALS (CRITICAL - NEVER COMMIT)
+# ============================================================================
 .env
 .env.*
-.DS_Store
+.env.local
+.env.production
+.env.staging
+.env.development
+
+# Snowflake credentials and keys
+*.p8
+*.pem
+*.key
+*.crt
+rsa_key*
+snowflake_jwt.token
+snowsql_config
+
+# SSH keys and certificates
+id_rsa*
+id_ed25519*
+*.pub
+ssh_config
+
+# Database connection strings
+database.ini
+db_config.yml
+connection_strings.txt
+
+# API keys and secrets
+secrets/
+keys/
+*.secret
+api_keys.json
+service-account*.json
+
+# ============================================================================
+# 🐍 PYTHON ENVIRONMENT & DEPENDENCIES
+# ============================================================================
+
+# Virtual environments
+.venv/
+.env/
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+.python-version
+
+# Python bytecode and cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Unit testing / coverage
+.coverage
+.pytest_cache/
+.cache
+htmlcov/
+.tox/
+.nox/
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb
+
+# IPython
+profile_default/
+ipython_config.py
+
+# Poetry
+poetry.lock
+
+# Pipenv
+Pipfile.lock
+
+# PEP 582
+__pypackages__/
+
+# ============================================================================
+# 🖥️ DEVELOPMENT ENVIRONMENTS & EDITORS
+# ============================================================================
+
+# Visual Studio Code
 .vscode/
+*.code-workspace
+
+# JetBrains IDEs (PyCharm, IntelliJ, etc.)
 .idea/
+*.iws
+*.iml
+*.ipr
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Atom
+.atom/
+
+# Vim
+*.swp
+*.swo
+*~
+.netrwhist
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# ============================================================================
+# 🖱️ OPERATING SYSTEM FILES
+# ============================================================================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.tmp
+*.temp
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# ============================================================================
+# 📊 DATA & SNOWFLAKE SPECIFIC
+# ============================================================================
+
+# Snowflake query results and exports
+*.csv.gz
+*.parquet
+*.json.gz
+query_results/
+exports/
+downloads/
+data_dumps/
+
+# SnowSQL configuration and history
+.snowsql/
+snowsql_rt.log*
+snowsql.log*
+
+# Database dumps and backups
+*.sql.gz
+*.dump
+*.backup
+backup/
+dumps/
+
+# Large data files
+*.xlsx
+*.xls
+*.xlsm
+big_data/
+sample_data/
+test_data/
+
+# Logs from data processing
+etl_logs/
+pipeline_logs/
+*.log
+*.out
+*.err
+
+# Temporary data processing files
+temp/
+tmp/
+cache/
+staging/
+scratch/
+
+# ============================================================================
+# 🔧 BUILD & DEPLOYMENT ARTIFACTS
+# ============================================================================
+
+# Build outputs
+build/
+dist/
+target/
+out/
+
+# Docker
+.dockerignore
+Dockerfile.local
+docker-compose.override.yml
+.docker/
+
+# Terraform (if used for infrastructure)
+*.tfstate
+*.tfstate.backup
+.terraform/
+terraform.tfvars
+*.tfplan
+
+# CI/CD artifacts
+.github/workflows/local_*.yml
+ci_logs/
+deployment_logs/
+
+# Package managers
+node_modules/
+package-lock.json
+yarn.lock
+
+# ============================================================================
+# 📝 DOCUMENTATION & TEMPORARY FILES
+# ============================================================================
+
+# Temporary documentation
+*.draft
+*.wip
+notes.md
+TODO.md
+scratch.md
+temp_*
+
+# Generated documentation
+docs/_build/
+site/
+
+# Backup files
+*.bak
+*.backup
+*.orig
+*~
+
+# Archive files (unless intentionally versioned)
+*.zip
+*.tar.gz
+*.rar
+*.7z
+
+# ============================================================================
+# 🧪 TESTING & DEVELOPMENT
+# ============================================================================
+
+# Test outputs and reports
+test_results/
+test_reports/
+pytest_html_report.html
+coverage_html_report/
+
+# Performance testing
+.benchmarks/
+performance_logs/
+
+# Development databases
+*.db
+*.sqlite
+*.sqlite3
+dev.db*
+test.db*
+
+# Mock data
+mock_data/
+fake_data/
+generated_data/
+
+# ============================================================================
+# 📱 MOBILE & MISC
+# ============================================================================
+
+# iOS
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Android
+*.apk
+*.ap_
+*.aab
+
+# Misc
+*.pid
+*.seed
+*.lock
