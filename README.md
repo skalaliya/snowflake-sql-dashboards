@@ -1,51 +1,218 @@
-# Snowflake SQL Dashboards
+# ❄️ Snowflake SQL Dashboards & Data Pipeline
 
-Production-ready Snowflake TPCH dashboards with automated CI/CD deployment and a complete Snowpark-pandas data pipeline. This repository contains numbered SQL files for schema setup, KPI views, aggregations, scheduled tasks, security grants, and a modern stored procedure + task pipeline that transforms TPCH data using Snowpark-pandas.
+<div align="center">
 
-## 🚀 Features
+[![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-2088FF?style=for-the-badge&logo=github-actions&logoColor=white)](https://github.com/skalaliya/snowflake-sql-dashboards/actions)
+[![Snowflake](https://img.shields.io/badge/Snowflake-29B5E8?style=for-the-badge&logo=snowflake&logoColor=white)](https://snowflake.com)
+[![Python](https://img.shields.io/badge/Python-3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
+[![License](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](LICENSE)
 
-- **Automated Deployment**: Hardened Python script with type hints, robust SQL parsing, and comprehensive error handling
-- **TPCH Analytics**: Pre-built views and aggregations for Snowflake's sample TPCH data
-- **CI/CD Integration**: GitHub Actions workflow for automatic deployment on push to main
-- **Modern Data Pipeline**: Python stored procedure using Snowpark-pandas for TPCH data transformation
-- **Serverless Tasks**: Automated data refresh with cron scheduling (created suspended for safety)
-- **Observability**: Pipeline health monitoring and task history views
-- **Security Best Practices**: Role-based access control with granular permissions
-- **Flexible Execution**: Support for dry-run, selective file execution, and error handling modes
+**Production-ready Snowflake TPCH analytics platform with automated CI/CD deployment and modern data pipeline**
 
-## 📁 Project Structure
+*A comprehensive solution featuring automated SQL deployment, Snowpark-pandas data processing, serverless tasks, and comprehensive observability*
+
+</div>
+
+---
+
+## 📋 **Table of Contents**
+
+- [🎯 Overview](#-overview)
+- [✨ Key Features](#-key-features)  
+- [🏗️ Architecture](#️-architecture)
+- [🚀 Quick Start](#-quick-start)
+- [📁 Project Structure](#-project-structure)
+- [⚙️ Configuration](#️-configuration)
+- [🔄 CI/CD Pipeline](#-cicd-pipeline)
+- [📊 Data Pipeline](#-data-pipeline)
+- [🔧 Advanced Usage](#-advanced-usage)
+- [📈 Monitoring](#-monitoring)
+- [🔒 Security](#-security)
+- [🧪 Testing](#-testing)
+- [🛠️ Troubleshooting](#️-troubleshooting)
+- [📚 Documentation](#-documentation)
+- [🤝 Contributing](#-contributing)
+
+---
+
+## 🎯 **Overview**
+
+This repository provides a **complete, production-ready Snowflake analytics solution** that combines traditional SQL dashboards with modern data pipeline capabilities. Built for the TPCH sample dataset, it demonstrates best practices for Snowflake development, deployment automation, and data engineering.
+
+### **What This Project Delivers:**
+
+🏢 **Enterprise-Grade SQL Dashboards** - Pre-built analytical views and KPIs for TPCH data  
+🤖 **Automated CI/CD Pipeline** - Zero-touch deployments with GitHub Actions  
+🐍 **Modern Data Pipeline** - Snowpark-pandas stored procedures with serverless tasks  
+📊 **Comprehensive Monitoring** - Pipeline health tracking and observability  
+🔐 **Security Best Practices** - Role-based access control and secure credential management  
+⚡ **Developer Experience** - Robust tooling with dry-run capabilities and selective execution
+
+## ✨ **Key Features**
+
+<table>
+<tr>
+<td width="50%">
+
+### 🚀 **Deployment & Automation**
+- ✅ **Hardened Python Deployment Engine** with type hints & robust SQL parsing
+- ✅ **GitHub Actions CI/CD** with concurrency controls & secret management  
+- ✅ **Selective Execution** - run specific files or full deployment
+- ✅ **Dry-Run Capabilities** - test changes safely before execution
+- ✅ **Environment Flexibility** - support for multiple deployment targets
+
+### 📊 **Analytics & Dashboards**  
+- ✅ **Pre-built TPCH Views** - customer, orders, suppliers, products
+- ✅ **KPI Aggregations** - revenue trends, top customers, performance metrics
+- ✅ **Market Analysis** - segment analysis, shipping mode insights
+- ✅ **Regional Reporting** - geographic revenue breakdowns
+
+</td>
+<td width="50%">
+
+### 🔧 **Modern Data Pipeline**
+- ✅ **Snowpark-pandas Integration** - modern Python data processing  
+- ✅ **Serverless Tasks** - automated scheduling with cron expressions
+- ✅ **Feature Engineering** - calculated fields and data transformations
+- ✅ **Data Versioning** - timestamped snapshots for audit trails
+
+### 🛡️ **Security & Observability**
+- ✅ **Role-Based Access Control** - analyst and engineer permission tiers
+- ✅ **Pipeline Health Monitoring** - execution tracking and alerting
+- ✅ **Task History Views** - comprehensive execution audit logs  
+- ✅ **Safe Defaults** - tasks created suspended, explicit activation required
+
+</td>
+</tr>
+</table>
+
+## 🏗️ **Architecture**
+
+<div align="center">
+
+```mermaid
+graph TB
+    subgraph "GitHub Repository"
+        A[SQL Files 01-10] --> B[Deploy Script]
+        B --> C[GitHub Actions]
+    end
+    
+    subgraph "Snowflake Cloud"
+        D[Database & Schema] --> E[TPCH Views]
+        E --> F[Aggregation Views]
+        F --> G[Stored Procedures]
+        G --> H[Serverless Tasks]
+        H --> I[Pipeline Monitoring]
+    end
+    
+    subgraph "Data Flow"
+        J[TPCH Sample Data] --> K[Snowpark Processing]
+        K --> L[Customer Profiles]
+        L --> M[Timestamped Snapshots]
+    end
+    
+    C --> D
+    style A fill:#e1f5fe
+    style G fill:#f3e5f5
+    style H fill:#fff3e0
+    style I fill:#e8f5e8
+```
+
+</div>
+
+## 📁 **Project Structure**
+
+<details>
+<summary><strong>🔍 Click to expand detailed project structure</strong></summary>
 
 ```
-.
-├── .github/
-│   └── workflows/
-│       └── deploy.yml              # GitHub Actions deployment workflow
-├── scripts/
-│   └── deploy.py                   # Hardened Python deployment script
-├── sql/
-│   ├── 01_schema.sql               # Database and schema setup
-│   ├── 02_tpch_views.sql           # TPCH detail views
-│   ├── 03_aggregations.sql         # KPI aggregations and metrics
-│   ├── 04_tasks.sql                # Scheduled tasks (commented examples)
-│   ├── 05_grants.sql               # Security grants and RBAC
-│   ├── 06_pipeline_prereqs.sql     # Pipeline prerequisites and sample data grants
-│   ├── 07_sp_customer_profile.sql  # Python stored procedure with Snowpark-pandas
-│   ├── 08_task_customer_profile.sql# Serverless task for data pipeline
-│   ├── 09_observability.sql        # Pipeline health monitoring
-│   └── 10_cleanup.sql              # Demo cleanup script
-├── .env.example                    # Environment variable template
-├── .gitignore                      # Git ignore file
-├── requirements.txt                # Python dependencies
-└── README.md                       # This file
+📦 snowflake-sql-dashboards/
+├── 🚀 .github/workflows/
+│   └── deploy.yml              # GitHub Actions CI/CD pipeline
+├── 🛠️ scripts/
+│   └── deploy.py              # Hardened deployment engine with CLI
+├── 📊 sql/
+│   ├── 01_schema.sql          # 🏗️ Database and schema foundation
+│   ├── 02_tpch_views.sql      # 👀 Customer, Order, Product views  
+│   ├── 03_aggregations.sql    # 📈 KPI metrics and analytics
+│   ├── 04_tasks.sql           # ⏰ Task examples (commented)
+│   ├── 05_grants.sql          # 🔐 RBAC and security permissions
+│   ├── 06_pipeline_prereqs.sql # 🔧 Pipeline setup and grants
+│   ├── 07_sp_customer_profile.sql # 🐍 Snowpark-pandas procedure
+│   ├── 08_task_customer_profile.sql # 🤖 Serverless automation
+│   ├── 09_observability.sql   # 📊 Monitoring and health checks
+│   └── 10_cleanup.sql         # 🧹 Demo teardown utilities
+├── ⚙️ .env.example            # Environment configuration template
+├── 🚫 .gitignore             # Git exclusion rules  
+├── 📦 requirements.txt        # Python dependencies
+├── 📄 LICENSE                # MIT license
+└── 📖 README.md              # This comprehensive guide
 ```
 
-## 🛠️ Setup Instructions
+### **Execution Flow:**
+1. **Infrastructure** (01-05): Database setup → Views → KPIs → Security
+2. **Pipeline** (06-09): Prerequisites → Stored Procedure → Task → Monitoring  
+3. **Utilities** (10): Cleanup and teardown capabilities
 
-### Prerequisites
+</details>
 
-- Snowflake account with appropriate privileges
-- Python 3.8 or higher
-- Access to Snowflake's `SNOWFLAKE_SAMPLE_DATA` database (usually available by default)
+## � **Quick Start**
+
+### ⚡ **30-Second Setup**
+
+```bash
+# 1️⃣ Clone and setup
+git clone https://github.com/skalaliya/snowflake-sql-dashboards.git
+cd snowflake-sql-dashboards
+python -m venv .venv && source .venv/bin/activate
+
+# 2️⃣ Install dependencies  
+pip install -r requirements.txt
+
+# 3️⃣ Configure credentials
+cp .env.example .env
+# Edit .env with your Snowflake details
+
+# 4️⃣ Test deployment
+python scripts/deploy.py --dry-run
+
+# 5️⃣ Deploy to Snowflake  
+python scripts/deploy.py
+```
+
+### 📋 **Prerequisites**
+
+<table>
+<tr>
+<td width="33%">
+
+**🏢 Snowflake Account**
+- Active Snowflake account
+- SYSADMIN role or higher  
+- Access to `SNOWFLAKE_SAMPLE_DATA`
+- CREATE DATABASE privileges
+
+</td>
+<td width="33%">
+
+**💻 Development Environment** 
+- Python 3.11+ recommended
+- Git for version control
+- Terminal/Command prompt
+- Text editor or IDE
+
+</td>
+<td width="34%">
+
+**☁️ GitHub (Optional)**
+- GitHub account for CI/CD
+- Repository access
+- Actions secrets configured
+- SSH key or token setup
+
+</td>
+</tr>
+</table>
 
 ### Local Setup
 
@@ -76,87 +243,225 @@ Production-ready Snowflake TPCH dashboards with automated CI/CD deployment and a
    - `SNOW_DATABASE`: Target database name (e.g., `ANALYTICS`)
    - `SNOW_SCHEMA`: Target schema name (e.g., `TPCH_APP`)
 
-5. **Test the deployment script**
+5. **Test and deploy**
    ```bash
-   # Dry run to see what would be executed
+   # 🔍 Dry run to preview execution
    python scripts/deploy.py --dry-run
    
-   # Run with error stopping
-   python scripts/deploy.py --stop-on-error
-   
-   # Run only a specific file
+   # 🎯 Run specific components only  
    python scripts/deploy.py --only 07_sp_customer_profile.sql
-   ```
-
-### GitHub Actions Setup
-
-To enable automated deployment via GitHub Actions:
-
-1. **Navigate to your repository settings**
-   - Go to Settings → Secrets and variables → Actions
-
-2. **Add the following secrets**:
    
-   | Secret Name | Description | Example |
-   |-------------|-------------|---------|
-   | `SNOW_ACCOUNT` | Snowflake account identifier | `xy12345.us-east-1` |
-   | `SNOW_USER` | Snowflake username | `DEPLOY_USER` |
-   | `SNOW_PASSWORD` | Snowflake password | `your_secure_password` |
-   | `SNOW_ROLE` | Snowflake role | `ACCOUNTADMIN` |
-   | `SNOW_DATABASE` | Target database | `TPCH_DASHBOARDS` |
-   | `SNOW_SCHEMA` | Target schema | `PUBLIC` |
-   | `SNOW_WAREHOUSE` | Compute warehouse | `COMPUTE_WH` |
-
-3. **Push to main branch**
-   ```bash
-   git add .
-   git commit -m "Initial deployment setup"
-   git push origin main
+   # 🚀 Full deployment with error handling
+   python scripts/deploy.py --stop-on-error
    ```
 
-4. **Monitor deployment**
-   - Go to Actions tab in your GitHub repository
-   - Watch the deployment workflow execute
-   - Check logs for any errors
+---
 
-## 🔄 Enabling the Data Pipeline
+## ⚙️ **Configuration**
 
-After deployment, the stored procedure and task are created but the task remains **SUSPENDED** for safety. To enable the automated data pipeline:
+### 🔧 **Environment Variables**
 
-1. **Manually run the stored procedure once to test:**
-   ```sql
-   CALL CREATE_CUSTOMER_PROFILE_SP();
-   ```
+<details>
+<summary><strong>📝 Complete .env configuration guide</strong></summary>
 
-2. **Enable the scheduled task:**
-   ```sql
-   ALTER TASK CUSTOMER_PROFILE_TASK RESUME;
-   ```
+```bash
+# 🏢 Snowflake Connection (Required)
+SNOW_ACCOUNT=xy12345.eu-west-1        # Your account identifier  
+SNOW_USER=your_username               # Snowflake username
+SNOW_PASSWORD=your_secure_password    # Use strong password or key-pair auth
+SNOW_ROLE=SYSADMIN                   # Role with necessary privileges
+SNOW_WAREHOUSE=TRANSFORM_WH           # Warehouse for compute
+SNOW_DATABASE=ANALYTICS               # Target database name
+SNOW_SCHEMA=TPCH_APP                 # Target schema name
 
-3. **Monitor task execution:**
-   ```sql
-   -- Check task status
-   SHOW TASKS LIKE 'CUSTOMER_PROFILE_TASK';
-   
-   -- View task history
-   SELECT * FROM V_TASK_HISTORY 
-   WHERE NAME = 'CUSTOMER_PROFILE_TASK'
-   ORDER BY SCHEDULED_TIME DESC;
-   
-   -- Check pipeline health
-   SELECT * FROM PIPELINE_HEALTH ORDER BY TS DESC;
-   ```
+# 🎛️ Deployment Control (Optional)
+DRY_RUN=0                            # 1=preview only, 0=execute
+ONLY=                                # Specific file: "07_sp_customer_profile.sql"  
+STOP_ON_ERROR=1                      # 1=halt on failure, 0=continue
+```
 
-4. **View generated data:**
-   ```sql
-   -- Current profile data
-   SELECT * FROM CUSTOMER_LINEITEM_PROFILE LIMIT 10;
-   
-   -- Timestamped snapshots
-   SHOW TABLES LIKE 'CUSTOMER_LINEITEM_PROFILE_%';
-   ```
+**🔍 Configuration Tips:**
+- **Account ID Format**: `organization-account` or `account.region.cloud`
+- **Role Permissions**: SYSADMIN minimum, ACCOUNTADMIN for full features
+- **Warehouse Sizing**: SMALL sufficient for development, scale as needed
+- **Security**: Never commit real credentials, use GitHub Secrets for CI/CD
 
-**⚠️ Timezone Note**: Task schedules use UTC by default. You can specify named timezones like `Europe/Paris` in the cron expression, but history timestamps are always in UTC.
+</details>
+
+### 🎯 **Deployment Modes**
+
+| Mode | Command | Description | Use Case |
+|------|---------|-------------|----------|
+| 🔍 **Preview** | `--dry-run` | Show what would execute | Testing changes |
+| 🎯 **Selective** | `--only filename.sql` | Execute specific file | Component testing |
+| 🛑 **Safe** | `--stop-on-error` | Halt on first failure | Production deployment |
+| 🔄 **Continue** | `STOP_ON_ERROR=0` | Attempt all statements | Development/debugging |
+
+---
+
+## 🔄 **CI/CD Pipeline**
+
+### 🚀 **Automated GitHub Actions Deployment**
+
+<div align="center">
+
+```mermaid
+graph LR
+    A[📝 Code Push] --> B[🔍 Checkout Code]
+    B --> C[🐍 Setup Python 3.11]
+    C --> D[📦 Install Dependencies]  
+    D --> E[❄️ Deploy to Snowflake]
+    E --> F[✅ Success Notification]
+    
+    style A fill:#e3f2fd
+    style E fill:#f3e5f5
+    style F fill:#e8f5e8
+```
+
+</div>
+
+### ⚙️ **GitHub Actions Configuration**
+
+<details>
+<summary><strong>🔧 Setup GitHub Secrets (Click to expand)</strong></summary>
+
+**Navigate to:** `Repository Settings → Secrets and Variables → Actions`
+
+| 🔑 Secret Name | 📋 Description | 💡 Example Value |
+|---------------|----------------|------------------|
+| `SNOW_ACCOUNT` | Snowflake account identifier | `xy12345.eu-west-1` |
+| `SNOW_USER` | Service account username | `CI_DEPLOY_USER` |
+| `SNOW_PASSWORD` | Secure password or private key | `******************` |
+| `SNOW_ROLE` | Deployment role with permissions | `SYSADMIN` |
+| `SNOW_DATABASE` | Target database | `ANALYTICS` |
+| `SNOW_SCHEMA` | Target schema | `TPCH_APP` |
+| `SNOW_WAREHOUSE` | Compute warehouse | `TRANSFORM_WH` |
+
+**🔒 Security Best Practices:**
+- Use dedicated service account for CI/CD
+- Grant minimal required permissions
+- Rotate credentials regularly  
+- Consider key-pair authentication for enhanced security
+
+</details>
+
+### 📊 **Workflow Features**
+
+✅ **Concurrency Control** - Prevents simultaneous deployments  
+✅ **Python 3.11** - Latest stable Python with enhanced performance  
+✅ **Dependency Caching** - Faster builds with pip cache  
+✅ **Error Handling** - Comprehensive logging and failure reporting  
+✅ **Manual Triggers** - `workflow_dispatch` for on-demand deployment
+
+---
+
+## � **Data Pipeline**
+
+### 🤖 **Modern Snowpark-Pandas Pipeline**
+
+<div align="center">
+
+```mermaid
+graph TB
+    subgraph "📊 TPCH Source Data"
+        A[LINEITEM] --> C[Snowpark-pandas Processing]
+        B[ORDERS] --> C
+    end
+    
+    subgraph "🔄 Data Transformation"
+        C --> D[Filter Non-Returned Items]
+        D --> E[Feature Engineering]
+        E --> F[Join & Aggregate]
+    end
+    
+    subgraph "💾 Output Tables"  
+        F --> G[CUSTOMER_LINEITEM_PROFILE]
+        F --> H[CUSTOMER_LINEITEM_PROFILE_TIMESTAMP]
+    end
+    
+    subgraph "⏰ Automation"
+        I[Serverless Task] --> C
+        I --> J[Hourly Execution]
+    end
+    
+    style C fill:#fff3e0
+    style G fill:#e8f5e8  
+    style I fill:#f3e5f5
+```
+
+</div>
+
+### 🚀 **Pipeline Activation Guide**
+
+<details>
+<summary><strong>🎯 Step-by-step pipeline enablement</strong></summary>
+
+#### 1️⃣ **Test the Stored Procedure**
+```sql
+-- Execute manually to verify functionality
+CALL CREATE_CUSTOMER_PROFILE_SP();
+-- Expected output: "wrote CUSTOMER_LINEITEM_PROFILE and CUSTOMER_LINEITEM_PROFILE_20251019_143022 with 5999 rows"
+```
+
+#### 2️⃣ **Enable Automated Execution**  
+```sql
+-- Activate the serverless task (created SUSPENDED by default)
+ALTER TASK CUSTOMER_PROFILE_TASK RESUME;
+
+-- Verify task status
+SHOW TASKS LIKE 'CUSTOMER_PROFILE_TASK';
+```
+
+#### 3️⃣ **Monitor Pipeline Health**
+```sql
+-- 📈 Check execution history
+SELECT * FROM V_TASK_HISTORY 
+WHERE NAME = 'CUSTOMER_PROFILE_TASK'
+ORDER BY SCHEDULED_TIME DESC LIMIT 10;
+
+-- 💊 Pipeline health metrics  
+SELECT * FROM PIPELINE_HEALTH ORDER BY TS DESC LIMIT 5;
+
+-- 📊 Data freshness check
+SELECT 
+    COUNT(*) as row_count,
+    MAX(L_SHIPDATE) as latest_ship_date,
+    CURRENT_TIMESTAMP() as check_time
+FROM CUSTOMER_LINEITEM_PROFILE;
+```
+
+#### 4️⃣ **Explore Generated Data**
+```sql
+-- 🎯 Current customer profiles
+SELECT * FROM CUSTOMER_LINEITEM_PROFILE 
+ORDER BY PRICE_AFTER_DISCOUNT DESC LIMIT 10;
+
+-- 📅 Historical snapshots
+SHOW TABLES LIKE 'CUSTOMER_LINEITEM_PROFILE_%';
+
+-- 🔍 Profile analytics
+SELECT 
+    O_CUSTKEY,
+    COUNT(*) as order_count,
+    AVG(PRICE_AFTER_DISCOUNT) as avg_discounted_price,
+    SUM(DISCOUNT_AMOUNT) as total_savings
+FROM CUSTOMER_LINEITEM_PROFILE 
+GROUP BY O_CUSTKEY 
+ORDER BY total_savings DESC LIMIT 10;
+```
+
+</details>
+
+### ⚙️ **Pipeline Configuration Options**
+
+| ⏰ Schedule | 📝 SQL Command | 🎯 Use Case |
+|------------|----------------|-------------|
+| **Hourly** | `CRON 0 * * * * UTC` | Real-time analytics |
+| **Daily 2AM** | `CRON 0 2 * * * UTC` | Nightly batch processing |
+| **Weekdays 9AM** | `CRON 0 9 * * 1-5 UTC` | Business hours refresh |
+| **Paris Time** | `CRON 0 */2 * * * Europe/Paris` | Regional scheduling |
+
+**🌍 Timezone Support**: Snowflake tasks support named timezones, but execution history is always stored in UTC.
 
 ## 📊 SQL Files Overview
 
@@ -230,53 +535,159 @@ Demo cleanup and teardown:
 - Includes commented commands for data cleanup
 - Useful for development and testing cycles
 
-## ⚙️ Advanced Usage
+---
 
-### Selective Execution
+## 📈 **Monitoring**
 
-Execute only specific SQL files using environment variables or CLI flags:
+### 🔍 **Pipeline Observability Dashboard**
 
+<details>
+<summary><strong>📊 Comprehensive monitoring queries (Click to expand)</strong></summary>
+
+#### 🚦 **Health Check Suite**
+```sql
+-- 🏥 Overall pipeline health
+SELECT 
+    'Pipeline Status' as metric,
+    CASE WHEN COUNT(*) > 0 THEN '✅ Healthy' ELSE '❌ No Data' END as status,
+    COUNT(*) as row_count,
+    MAX(TS) as last_update
+FROM PIPELINE_HEALTH;
+
+-- ⏱️ Task execution summary (last 24 hours)
+SELECT 
+    STATE,
+    COUNT(*) as execution_count,
+    AVG(RUN_TIME_MS)/1000 as avg_duration_seconds,
+    MAX(SCHEDULED_TIME) as last_execution
+FROM V_TASK_HISTORY 
+WHERE SCHEDULED_TIME >= DATEADD('hour', -24, CURRENT_TIMESTAMP())
+GROUP BY STATE;
+
+-- 📊 Data freshness indicators
+SELECT 
+    'Customer Profiles' as table_name,
+    COUNT(*) as total_records,
+    COUNT(DISTINCT O_CUSTKEY) as unique_customers,
+    SUM(PRICE_AFTER_DISCOUNT) as total_revenue,
+    AVG(DISCOUNT_AMOUNT) as avg_discount
+FROM CUSTOMER_LINEITEM_PROFILE;
+```
+
+#### 🎯 **Performance Metrics**
+```sql
+-- 🚀 Processing performance trends
+SELECT 
+    DATE_TRUNC('hour', SCHEDULED_TIME) as execution_hour,
+    AVG(RUN_TIME_MS)/1000 as avg_duration_seconds,
+    COUNT(*) as executions,
+    SUM(CASE WHEN STATE = 'SUCCEEDED' THEN 1 ELSE 0 END) as success_count
+FROM V_TASK_HISTORY 
+WHERE SCHEDULED_TIME >= DATEADD('day', -7, CURRENT_TIMESTAMP())
+GROUP BY DATE_TRUNC('hour', SCHEDULED_TIME)
+ORDER BY execution_hour DESC;
+
+-- 💾 Storage utilization by snapshots
+SELECT 
+    TABLE_NAME,
+    ROW_COUNT,
+    BYTES / (1024*1024*1024) as size_gb,
+    CREATED as snapshot_date
+FROM INFORMATION_SCHEMA.TABLES 
+WHERE TABLE_NAME LIKE 'CUSTOMER_LINEITEM_PROFILE_%'
+ORDER BY CREATED DESC;
+```
+
+#### 🚨 **Alert Queries**
+```sql
+-- 🔴 Failed executions (last 24 hours)
+SELECT * FROM V_TASK_HISTORY 
+WHERE STATE != 'SUCCEEDED' 
+  AND SCHEDULED_TIME >= DATEADD('day', -1, CURRENT_TIMESTAMP())
+ORDER BY SCHEDULED_TIME DESC;
+
+-- ⚠️ Long-running executions (> 5 minutes)
+SELECT * FROM V_TASK_HISTORY 
+WHERE RUN_TIME_MS > 300000  -- 5 minutes
+ORDER BY RUN_TIME_MS DESC LIMIT 10;
+```
+
+</details>
+
+---
+
+## 🔧 **Advanced Usage**
+
+### 🎯 **Development Workflows**
+
+<table>
+<tr>
+<td width="50%">
+
+#### 🛠️ **Component Testing**
 ```bash
-# Using environment variable
-ONLY=07_sp_customer_profile.sql python scripts/deploy.py
+# Test specific pipeline components
+python scripts/deploy.py --only 06_pipeline_prereqs.sql --dry-run
+python scripts/deploy.py --only 07_sp_customer_profile.sql  
+python scripts/deploy.py --only 08_task_customer_profile.sql
 
-# Using CLI flag
+# Environment-based execution
+ONLY=09_observability.sql DRY_RUN=1 python scripts/deploy.py
+```
+
+#### 📊 **Data Pipeline Operations**
+```sql
+-- Manual procedure execution
+CALL CREATE_CUSTOMER_PROFILE_SP();
+
+-- Task management
+ALTER TASK CUSTOMER_PROFILE_TASK SUSPEND;
+ALTER TASK CUSTOMER_PROFILE_TASK RESUME;
+EXECUTE TASK CUSTOMER_PROFILE_TASK;
+
+-- Schedule modifications
+ALTER TASK CUSTOMER_PROFILE_TASK 
+SET SCHEDULE = 'USING CRON 0 */6 * * * UTC';
+```
+
+</td>
+<td width="50%">
+
+#### 🔄 **Deployment Strategies**
+```bash
+# Incremental deployment (skip infrastructure)
 python scripts/deploy.py --only 07_sp_customer_profile.sql
 
-# Dry run to preview statements
-DRY_RUN=1 python scripts/deploy.py
-python scripts/deploy.py --dry-run
+# Safe production deployment  
+python scripts/deploy.py --stop-on-error --dry-run
+python scripts/deploy.py --stop-on-error
 
-# Continue on errors (don't stop on first failure)
+# Development mode (continue on errors)
 STOP_ON_ERROR=0 python scripts/deploy.py
 ```
 
-### Environment Variable Controls
+#### 🧹 **Maintenance Operations**
+```bash
+# Clean up development artifacts
+python scripts/deploy.py --only 10_cleanup.sql
 
-Set in `.env` file or environment:
-
-- `DRY_RUN=1`: Print statements without executing
-- `ONLY=filename.sql`: Execute only the specified file
-- `STOP_ON_ERROR=0`: Continue execution even if statements fail
-
-### Pipeline Management
-
-```sql
--- Check what procedures exist
-SHOW PROCEDURES LIKE 'CREATE_CUSTOMER_PROFILE%';
-
--- View task configuration
-DESC TASK CUSTOMER_PROFILE_TASK;
-
--- Manual task execution (useful for testing)
-EXECUTE TASK CUSTOMER_PROFILE_TASK;
-
--- Suspend task for maintenance
-ALTER TASK CUSTOMER_PROFILE_TASK SUSPEND;
-
--- Change schedule (example: every 6 hours)
-ALTER TASK CUSTOMER_PROFILE_TASK SET SCHEDULE = 'USING CRON 0 */6 * * * UTC';
+# Reset pipeline for testing
+python scripts/deploy.py --only 10_cleanup.sql
+python scripts/deploy.py --only 06_pipeline_prereqs.sql
+python scripts/deploy.py --only 07_sp_customer_profile.sql
 ```
+
+</td>
+</tr>
+</table>
+
+### ⚙️ **Configuration Management**
+
+| 🎛️ Control | 🔧 Environment Variable | 💻 CLI Flag | 📝 Description |
+|------------|------------------------|-------------|----------------|
+| **Preview Mode** | `DRY_RUN=1` | `--dry-run` | Show execution plan without changes |
+| **Selective Run** | `ONLY=filename.sql` | `--only filename.sql` | Execute single file only |
+| **Error Handling** | `STOP_ON_ERROR=0` | *(default: stop)* | Continue execution on failures |
 
 ## 🔒 Security Best Practices
 
@@ -287,27 +698,90 @@ ALTER TASK CUSTOMER_PROFILE_TASK SET SCHEDULE = 'USING CRON 0 */6 * * * UTC';
 5. **Role Hierarchy**: Follow Snowflake's recommended role hierarchy
 6. **Audit**: Regularly review access logs and granted privileges
 
-## 🧪 Testing
+---
 
-To test the deployment locally without making changes:
+## 🧪 **Testing**
 
+### 🔬 **Comprehensive Test Suite**
+
+<details>
+<summary><strong>🧾 Complete testing checklist (Click to expand)</strong></summary>
+
+#### 1️⃣ **Pre-deployment Validation**
 ```bash
-# Dry run (add dry-run logic to deploy.py if needed)
-python scripts/deploy.py
+# 🔍 Syntax and logic validation  
+python scripts/deploy.py --dry-run
+
+# 🎯 Component-specific testing
+python scripts/deploy.py --only 01_schema.sql --dry-run
+python scripts/deploy.py --only 07_sp_customer_profile.sql --dry-run
+
+# 📊 Full deployment preview
+DRY_RUN=1 python scripts/deploy.py
 ```
 
-To verify deployed objects in Snowflake:
-
+#### 2️⃣ **Post-deployment Verification**
 ```sql
--- Check created views
+-- 🏗️ Infrastructure validation
+SHOW DATABASES LIKE '%TPCH%';
+SHOW SCHEMAS IN DATABASE TPCH_DASHBOARDS;
+SHOW WAREHOUSES LIKE '%ANALYTICS%';
+
+-- 👀 View functionality testing
 SHOW VIEWS IN SCHEMA TPCH_DASHBOARDS.PUBLIC;
+SELECT COUNT(*) FROM V_CUSTOMER_DETAILS;
+SELECT * FROM V_TOP_CUSTOMERS LIMIT 5;
 
--- Test a view
-SELECT * FROM TPCH_DASHBOARDS.PUBLIC.V_TOP_CUSTOMERS LIMIT 10;
-
--- Check roles and grants
+-- 🔐 Security verification
+SHOW ROLES LIKE '%DASHBOARD%';
 SHOW GRANTS TO ROLE DASHBOARD_ANALYST_ROLE;
+SHOW GRANTS ON SCHEMA TPCH_DASHBOARDS.PUBLIC;
+
+-- 🤖 Pipeline component testing
+SHOW PROCEDURES LIKE '%CUSTOMER_PROFILE%';
+SHOW TASKS LIKE '%CUSTOMER_PROFILE%';
+DESC TASK CUSTOMER_PROFILE_TASK;
 ```
+
+#### 3️⃣ **Data Quality Validation**
+```sql
+-- 📊 Sample data availability
+SELECT COUNT(*) FROM SNOWFLAKE_SAMPLE_DATA.TPCH_SF1.LINEITEM;
+SELECT COUNT(*) FROM SNOWFLAKE_SAMPLE_DATA.TPCH_SF1.ORDERS;
+
+-- 🧪 Stored procedure testing
+CALL CREATE_CUSTOMER_PROFILE_SP();
+SELECT COUNT(*) FROM CUSTOMER_LINEITEM_PROFILE;
+
+-- 🔍 Data integrity checks
+SELECT 
+    COUNT(*) as total_records,
+    COUNT(DISTINCT O_CUSTKEY) as unique_customers,
+    MIN(PRICE_AFTER_DISCOUNT) as min_price,
+    MAX(PRICE_AFTER_DISCOUNT) as max_price
+FROM CUSTOMER_LINEITEM_PROFILE;
+```
+
+#### 4️⃣ **Performance Benchmarking**
+```sql
+-- ⚡ Query performance testing
+SELECT SYSTEM$LAST_QUERY_ID(); -- Note query ID for monitoring
+
+-- 📈 Execution time validation  
+SELECT * FROM TABLE(INFORMATION_SCHEMA.QUERY_HISTORY())
+WHERE QUERY_ID = 'YOUR_QUERY_ID_HERE';
+```
+
+</details>
+
+### 🚀 **CI/CD Testing**
+
+| 🧪 Test Type | 🎯 Command | ✅ Success Criteria |
+|-------------|------------|---------------------|
+| **Syntax Check** | `--dry-run` | No parsing errors, all 68 statements validated |  
+| **Selective Deploy** | `--only 07_sp_customer_profile.sql` | Single component deploys successfully |
+| **Full Pipeline** | Standard deployment | All objects created, task suspended |
+| **Data Validation** | Manual SP execution | Customer profiles generated successfully |
 
 ## 🔧 Troubleshooting
 
@@ -350,6 +824,97 @@ SHOW GRANTS TO ROLE DASHBOARD_ANALYST_ROLE;
    - Use virtual environment: `python -m venv .venv && source .venv/bin/activate`
    - Check Python version compatibility (3.8+ required, 3.11 recommended)
 
+### 🆘 **Quick Problem Resolution**
+
+<details>
+<summary><strong>🔧 Common solutions and fixes (Click to expand)</strong></summary>
+
+#### 🚨 **Emergency Procedures**
+
+**Pipeline Stuck or Failing:**
+```sql
+-- 1. Suspend the task immediately
+ALTER TASK CUSTOMER_PROFILE_TASK SUSPEND;
+
+-- 2. Check recent execution logs
+SELECT * FROM V_TASK_HISTORY 
+WHERE NAME = 'CUSTOMER_PROFILE_TASK' 
+ORDER BY SCHEDULED_TIME DESC LIMIT 5;
+
+-- 3. Manual recovery execution
+CALL CREATE_CUSTOMER_PROFILE_SP();
+```
+
+**Deployment Rollback:**
+```bash
+# 1. Run cleanup script
+python scripts/deploy.py --only 10_cleanup.sql
+
+# 2. Redeploy specific components
+python scripts/deploy.py --only 01_schema.sql
+python scripts/deploy.py --only 02_tpch_views.sql
+```
+
+#### 🔍 **Diagnostic Queries**
+
+```sql
+-- System health check
+SELECT CURRENT_VERSION(), CURRENT_ACCOUNT(), CURRENT_ROLE();
+
+-- Resource utilization
+SHOW WAREHOUSES;
+SELECT * FROM TABLE(INFORMATION_SCHEMA.WAREHOUSE_METERING_HISTORY(
+    dateadd('days', -1, current_date()), current_date()
+));
+
+-- Query performance analysis
+SELECT * FROM TABLE(INFORMATION_SCHEMA.QUERY_HISTORY(
+    dateadd('hour', -1, current_timestamp()), current_timestamp()
+)) ORDER BY START_TIME DESC LIMIT 10;
+```
+
+#### 📞 **Getting Help**
+
+- 📖 **Snowflake Documentation**: [docs.snowflake.com](https://docs.snowflake.com)
+- 🏠 **GitHub Issues**: [Create an issue](https://github.com/skalaliya/snowflake-sql-dashboards/issues/new)
+- 💬 **Snowflake Community**: [community.snowflake.com](https://community.snowflake.com)
+- 🎓 **Snowflake University**: [learn.snowflake.com](https://learn.snowflake.com)
+
+</details>
+
+---
+
+## 📚 **Documentation**
+
+### 📖 **Additional Resources**
+
+| 📂 Component | 📋 Documentation | 🔗 Reference |
+|-------------|------------------|--------------|
+| **Snowpark-pandas** | [Snowpark Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/snowpark-pandas) | Advanced data processing |
+| **Serverless Tasks** | [Task Documentation](https://docs.snowflake.com/en/user-guide/tasks-intro) | Automation and scheduling |
+| **GitHub Actions** | [Actions Guide](https://docs.github.com/en/actions) | CI/CD workflows |
+| **RBAC Security** | [Access Control](https://docs.snowflake.com/en/user-guide/security-access-control-overview) | Security best practices |
+
+### 🎯 **SQL File Reference**
+
+<details>
+<summary><strong>📁 Detailed SQL components documentation</strong></summary>
+
+| 📄 File | 🎯 Purpose | 🔍 Key Objects | 📊 Output |
+|---------|------------|----------------|-----------|
+| **01_schema.sql** | Infrastructure setup | Database, Schema, Warehouse | Foundation objects |
+| **02_tpch_views.sql** | Data layer views | V_CUSTOMER_DETAILS, V_ORDER_DETAILS | Joined TPCH data |
+| **03_aggregations.sql** | Analytics views | V_TOP_CUSTOMERS, V_MONTHLY_REVENUE | KPI metrics |
+| **04_tasks.sql** | Task examples | Commented templates | Reference patterns |
+| **05_grants.sql** | Security layer | DASHBOARD_ANALYST_ROLE, RBAC | Access control |
+| **06_pipeline_prereqs.sql** | Pipeline setup | Sample data grants | Permissions |
+| **07_sp_customer_profile.sql** | Data processing | CREATE_CUSTOMER_PROFILE_SP() | Transformed data |
+| **08_task_customer_profile.sql** | Automation | CUSTOMER_PROFILE_TASK | Scheduled execution |
+| **09_observability.sql** | Monitoring | PIPELINE_HEALTH, V_TASK_HISTORY | Health metrics |
+| **10_cleanup.sql** | Maintenance | Teardown procedures | Clean environment |
+
+</details>
+
 ## 📈 Usage Examples
 
 Once deployed, you can query the views for insights:
@@ -371,79 +936,118 @@ WHERE NET_REVENUE > 1000000
 ORDER BY NET_REVENUE DESC;
 ```
 
-## 🤝 Contributing
+---
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/your-feature`)
-3. Make your changes
-4. Test locally with your Snowflake account
-5. Commit your changes (`git commit -am 'Add new feature'`)
-6. Push to the branch (`git push origin feature/your-feature`)
-7. Open a Pull Request
+## 🤝 **Contributing**
 
-## 📝 License
+### 🚀 **How to Contribute**
 
-This project is licensed under the terms specified in the LICENSE file.
+We welcome contributions from the community! Whether you're fixing bugs, adding features, or improving documentation, your help makes this project better.
 
-## 📧 Support
+<details>
+<summary><strong>📋 Contribution guidelines (Click to expand)</strong></summary>
 
-For issues or questions:
-- Open an issue in this repository
-- Check Snowflake documentation: https://docs.snowflake.com/
-- Review GitHub Actions documentation: https://docs.github.com/en/actions
+#### 🔧 **Development Workflow**
 
-## 🔄 Deployment Workflow
+1. **🍴 Fork & Clone**
+   ```bash
+   git clone https://github.com/YOUR_USERNAME/snowflake-sql-dashboards.git
+   cd snowflake-sql-dashboards
+   ```
 
-The deployment follows these steps:
+2. **🌿 Create Feature Branch**
+   ```bash
+   git checkout -b feature/amazing-new-feature
+   git checkout -b fix/important-bug-fix
+   git checkout -b docs/improve-documentation
+   ```
 
-1. **Trigger**: Push to `main` branch or manual workflow dispatch
-2. **Checkout**: Code is checked out from the repository  
-3. **Setup**: Python 3.11 environment is configured
-4. **Install**: Dependencies are installed from `requirements.txt` (includes sqlparse for robust SQL parsing)
-5. **Deploy**: Hardened `scripts/deploy.py` executes SQL files in lexicographic order:
-   - 01_schema.sql (Database and schema setup)
-   - 02_tpch_views.sql (TPCH detail views)
-   - 03_aggregations.sql (KPI aggregations)
-   - 04_tasks.sql (Example scheduled tasks)
-   - 05_grants.sql (Security and RBAC)
-   - 06_pipeline_prereqs.sql (Sample data grants)
-   - 07_sp_customer_profile.sql (Snowpark-pandas stored procedure)
-   - 08_task_customer_profile.sql (Serverless task - created SUSPENDED)
-   - 09_observability.sql (Monitoring tables and views)
-   - 10_cleanup.sql (Demo teardown script)
-6. **Verify**: Deployment success with comprehensive logging and error handling
+3. **💻 Develop & Test**
+   ```bash
+   # Set up development environment
+   python -m venv .venv && source .venv/bin/activate
+   pip install -r requirements.txt
+   
+   # Test your changes
+   python scripts/deploy.py --dry-run
+   python scripts/deploy.py --only YOUR_NEW_FILE.sql --dry-run
+   ```
 
-The deployment script now includes:
-- Type hints and comprehensive error handling
-- Robust SQL statement parsing with sqlparse  
-- Support for dry-run, selective execution, and error handling modes
-- Detailed logging of each statement execution
+4. **✅ Quality Checks**
+   - Test with multiple SQL files
+   - Verify dry-run functionality
+   - Update documentation as needed
+   - Follow existing code style
 
-## ⚙️ Customization
+5. **📤 Submit Changes**
+   ```bash
+   git add .
+   git commit -m "feat: add amazing new feature"
+   git push origin feature/amazing-new-feature
+   ```
 
-### Adding New SQL Files
+6. **🔄 Create Pull Request**
+   - Provide clear description of changes
+   - Include testing steps
+   - Reference any related issues
 
-SQL files are executed in lexicographic order (01, 02, ..., 10, ...). To add new files:
+#### 🎯 **Contribution Areas**
 
-1. Create a new file in `sql/` directory with appropriate numeric prefix (e.g., `11_custom_views.sql`)
-2. Ensure the file works with the current database/schema context
-3. Test locally with dry run: `python scripts/deploy.py --only 11_custom_views.sql --dry-run`
-4. Test actual execution: `python scripts/deploy.py --only 11_custom_views.sql`
-5. Commit and push to trigger automatic deployment
+| 🏗️ Area | 💡 Ideas | 🎓 Skill Level |
+|----------|----------|----------------|
+| **SQL Analytics** | New KPI views, advanced metrics | Beginner-Intermediate |
+| **Python Enhancement** | Error handling, performance | Intermediate |
+| **CI/CD Improvements** | New workflows, testing | Intermediate-Advanced |
+| **Documentation** | Tutorials, examples | All levels |
+| **Security** | RBAC enhancements, best practices | Advanced |
 
-**Note**: Files 06-10 contain the new pipeline components. Add custom files with prefixes 11+ to maintain execution order.
+#### 📝 **Coding Standards**
 
-### Modifying Aggregations
+- **SQL**: Use consistent naming, add comments, follow Snowflake best practices
+- **Python**: Type hints, comprehensive error handling, clear function names
+- **Documentation**: Update README.md for any new features or changes
+- **Testing**: Include dry-run tests for new SQL files
 
-Edit `sql/03_aggregations.sql` to add or modify KPI views based on your requirements.
+</details>
 
-### Enabling Tasks
+### 🏆 **Recognition**
 
-Uncomment task definitions in `sql/04_tasks.sql` and modify schedules as needed. Remember to resume tasks after creation:
+Contributors will be recognized in our [Contributors](https://github.com/skalaliya/snowflake-sql-dashboards/graphs/contributors) section. Significant contributions may be highlighted in release notes.
 
-```sql
-ALTER TASK TASK_NAME RESUME;
-```
+---
+
+## 📄 **License**
+
+This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
+
+---
+
+<div align="center">
+
+## 🌟 **Star this Repository**
+
+If this project helped you or your organization, please consider giving it a ⭐!
+
+**Built with ❄️ by the Snowflake community**
+
+---
+
+### 📈 **Project Status**
+
+![GitHub Stars](https://img.shields.io/github/stars/skalaliya/snowflake-sql-dashboards?style=social)
+![GitHub Forks](https://img.shields.io/github/forks/skalaliya/snowflake-sql-dashboards?style=social)
+![GitHub Issues](https://img.shields.io/github/issues/skalaliya/snowflake-sql-dashboards)
+![GitHub Last Commit](https://img.shields.io/github/last-commit/skalaliya/snowflake-sql-dashboards)
+
+**📊 Analytics & Dashboards** • **🤖 Data Pipeline** • **🚀 CI/CD Automation** • **📈 Production Ready**
+
+---
+
+*For questions, suggestions, or support, please [open an issue](https://github.com/skalaliya/snowflake-sql-dashboards/issues) or reach out to the maintainers.*
+
+</div>
+
+
 
 ---
 
