@@ -1,10 +1,16 @@
-name: Deploy Snowflake SQL Dashboards
+name: Deploy to Snowflake
 
 on:
   push:
-    branches:
-      - main
-  workflow_dispatch:  # Allow manual triggers
+    branches: [ main ]
+  workflow_dispatch:
+
+concurrency:
+  group: snowflake-deploy
+  cancel-in-progress: true
+
+permissions:
+  contents: read
 
 jobs:
   deploy:
@@ -25,26 +31,18 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
       
-      - name: Run deployment script
+      - name: Deploy to Snowflake
         env:
           SNOW_ACCOUNT: ${{ secrets.SNOW_ACCOUNT }}
           SNOW_USER: ${{ secrets.SNOW_USER }}
           SNOW_PASSWORD: ${{ secrets.SNOW_PASSWORD }}
           SNOW_ROLE: ${{ secrets.SNOW_ROLE }}
+          SNOW_WAREHOUSE: ${{ secrets.SNOW_WAREHOUSE }}
           SNOW_DATABASE: ${{ secrets.SNOW_DATABASE }}
           SNOW_SCHEMA: ${{ secrets.SNOW_SCHEMA }}
-          SNOW_WAREHOUSE: ${{ secrets.SNOW_WAREHOUSE }}
+          STOP_ON_ERROR: 1
         run: |
+          echo "🚀 Starting Snowflake deployment..."
           python scripts/deploy.py
-      
-      - name: Deployment summary
-        if: success()
-        run: |
-          echo "✓ Deployment completed successfully!"
-          echo "All SQL files have been executed in lexicographic order."
-      
-      - name: Deployment failed
-        if: failure()
-        run: |
-          echo "✗ Deployment failed. Please check the logs above for details."
-          exit 1
+          echo "✅ Deployment completed successfully!"
+

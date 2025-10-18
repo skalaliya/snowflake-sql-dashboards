@@ -1,14 +1,17 @@
 # Snowflake SQL Dashboards
 
-Production-ready Snowflake TPCH dashboards with automated CI/CD deployment. This repository contains numbered SQL files for schema setup, KPI views, aggregations, scheduled tasks, and security grants, along with a Python deployment script and GitHub Actions workflow.
+Production-ready Snowflake TPCH dashboards with automated CI/CD deployment and a complete Snowpark-pandas data pipeline. This repository contains numbered SQL files for schema setup, KPI views, aggregations, scheduled tasks, security grants, and a modern stored procedure + task pipeline that transforms TPCH data using Snowpark-pandas.
 
 ## 🚀 Features
 
-- **Automated Deployment**: Python script runs SQL files in lexicographic order
+- **Automated Deployment**: Hardened Python script with type hints, robust SQL parsing, and comprehensive error handling
 - **TPCH Analytics**: Pre-built views and aggregations for Snowflake's sample TPCH data
 - **CI/CD Integration**: GitHub Actions workflow for automatic deployment on push to main
+- **Modern Data Pipeline**: Python stored procedure using Snowpark-pandas for TPCH data transformation
+- **Serverless Tasks**: Automated data refresh with cron scheduling (created suspended for safety)
+- **Observability**: Pipeline health monitoring and task history views
 - **Security Best Practices**: Role-based access control with granular permissions
-- **Scheduled Tasks**: Example task definitions for data refresh workflows (commented)
+- **Flexible Execution**: Support for dry-run, selective file execution, and error handling modes
 
 ## 📁 Project Structure
 
@@ -16,18 +19,24 @@ Production-ready Snowflake TPCH dashboards with automated CI/CD deployment. This
 .
 ├── .github/
 │   └── workflows/
-│       └── deploy.yml          # GitHub Actions deployment workflow
+│       └── deploy.yml              # GitHub Actions deployment workflow
 ├── scripts/
-│   └── deploy.py               # Python deployment script
+│   └── deploy.py                   # Hardened Python deployment script
 ├── sql/
-│   ├── 01_schema.sql           # Database and schema setup
-│   ├── 02_tpch_views.sql       # TPCH detail views
-│   ├── 03_aggregations.sql     # KPI aggregations and metrics
-│   ├── 04_tasks.sql            # Scheduled tasks (commented examples)
-│   └── 05_grants.sql           # Security grants and RBAC
-├── .env.example                # Environment variable template
-├── requirements.txt            # Python dependencies
-└── README.md                   # This file
+│   ├── 01_schema.sql               # Database and schema setup
+│   ├── 02_tpch_views.sql           # TPCH detail views
+│   ├── 03_aggregations.sql         # KPI aggregations and metrics
+│   ├── 04_tasks.sql                # Scheduled tasks (commented examples)
+│   ├── 05_grants.sql               # Security grants and RBAC
+│   ├── 06_pipeline_prereqs.sql     # Pipeline prerequisites and sample data grants
+│   ├── 07_sp_customer_profile.sql  # Python stored procedure with Snowpark-pandas
+│   ├── 08_task_customer_profile.sql# Serverless task for data pipeline
+│   ├── 09_observability.sql        # Pipeline health monitoring
+│   └── 10_cleanup.sql              # Demo cleanup script
+├── .env.example                    # Environment variable template
+├── .gitignore                      # Git ignore file
+├── requirements.txt                # Python dependencies
+└── README.md                       # This file
 ```
 
 ## 🛠️ Setup Instructions
@@ -46,8 +55,9 @@ Production-ready Snowflake TPCH dashboards with automated CI/CD deployment. This
    cd snowflake-sql-dashboards
    ```
 
-2. **Install Python dependencies**
+2. **Set up Python virtual environment**
    ```bash
+   python -m venv .venv && source .venv/bin/activate
    pip install -r requirements.txt
    ```
 
@@ -58,17 +68,24 @@ Production-ready Snowflake TPCH dashboards with automated CI/CD deployment. This
    ```
 
 4. **Update .env file with your Snowflake credentials**
-   - `SNOW_ACCOUNT`: Your Snowflake account identifier (e.g., `xy12345.us-east-1`)
-   - `SNOW_USER`: Your Snowflake username
+   - `SNOW_ACCOUNT`: Your Snowflake account identifier (e.g., `xy12345.eu-west-1`)
+   - `SNOW_USER`: Your Snowflake username  
    - `SNOW_PASSWORD`: Your Snowflake password
-   - `SNOW_ROLE`: Role to use (e.g., `ACCOUNTADMIN` or `SYSADMIN`)
-   - `SNOW_DATABASE`: Target database name (default: `TPCH_DASHBOARDS`)
-   - `SNOW_SCHEMA`: Target schema name (default: `PUBLIC`)
-   - `SNOW_WAREHOUSE`: Warehouse to use (default: `COMPUTE_WH`)
+   - `SNOW_ROLE`: Role to use (e.g., `SYSADMIN`)
+   - `SNOW_WAREHOUSE`: Warehouse to use (e.g., `TRANSFORM_WH`)
+   - `SNOW_DATABASE`: Target database name (e.g., `ANALYTICS`)
+   - `SNOW_SCHEMA`: Target schema name (e.g., `TPCH_APP`)
 
-5. **Run the deployment script**
+5. **Test the deployment script**
    ```bash
-   python scripts/deploy.py
+   # Dry run to see what would be executed
+   python scripts/deploy.py --dry-run
+   
+   # Run with error stopping
+   python scripts/deploy.py --stop-on-error
+   
+   # Run only a specific file
+   python scripts/deploy.py --only 07_sp_customer_profile.sql
    ```
 
 ### GitHub Actions Setup
@@ -101,6 +118,45 @@ To enable automated deployment via GitHub Actions:
    - Go to Actions tab in your GitHub repository
    - Watch the deployment workflow execute
    - Check logs for any errors
+
+## 🔄 Enabling the Data Pipeline
+
+After deployment, the stored procedure and task are created but the task remains **SUSPENDED** for safety. To enable the automated data pipeline:
+
+1. **Manually run the stored procedure once to test:**
+   ```sql
+   CALL CREATE_CUSTOMER_PROFILE_SP();
+   ```
+
+2. **Enable the scheduled task:**
+   ```sql
+   ALTER TASK CUSTOMER_PROFILE_TASK RESUME;
+   ```
+
+3. **Monitor task execution:**
+   ```sql
+   -- Check task status
+   SHOW TASKS LIKE 'CUSTOMER_PROFILE_TASK';
+   
+   -- View task history
+   SELECT * FROM V_TASK_HISTORY 
+   WHERE NAME = 'CUSTOMER_PROFILE_TASK'
+   ORDER BY SCHEDULED_TIME DESC;
+   
+   -- Check pipeline health
+   SELECT * FROM PIPELINE_HEALTH ORDER BY TS DESC;
+   ```
+
+4. **View generated data:**
+   ```sql
+   -- Current profile data
+   SELECT * FROM CUSTOMER_LINEITEM_PROFILE LIMIT 10;
+   
+   -- Timestamped snapshots
+   SHOW TABLES LIKE 'CUSTOMER_LINEITEM_PROFILE_%';
+   ```
+
+**⚠️ Timezone Note**: Task schedules use UTC by default. You can specify named timezones like `Europe/Paris` in the cron expression, but history timestamps are always in UTC.
 
 ## 📊 SQL Files Overview
 
@@ -140,13 +196,96 @@ Sets up role-based access control:
 - Grants on database, schema, warehouse, and views
 - Sample data access permissions
 
+### 06_pipeline_prereqs.sql
+Pipeline prerequisites and sample data access:
+- Grants access to `SNOWFLAKE_SAMPLE_DATA.TPCH_SF1` schema
+- Uses current database/schema from connection context
+- Prepares environment for stored procedure execution
+
+### 07_sp_customer_profile.sql
+Python stored procedure using Snowpark-pandas:
+- `CREATE_CUSTOMER_PROFILE_SP()`: Transforms TPCH line item and order data
+- Filters out returned items (`L_RETURNFLAG != "A"`)
+- Creates calculated fields: discount amount, price after discount, price per quantity
+- Outputs both current table (`CUSTOMER_LINEITEM_PROFILE`) and timestamped snapshot
+- Returns execution summary with row count
+
+### 08_task_customer_profile.sql
+Serverless task for automated execution:
+- `CUSTOMER_PROFILE_TASK`: Calls the stored procedure hourly
+- Created **SUSPENDED** by default for safety
+- Uses UTC cron scheduling (`0 * * * * UTC`)
+- Includes examples for timezone-specific scheduling
+
+### 09_observability.sql
+Pipeline monitoring and health checks:
+- `PIPELINE_HEALTH`: Table for recording execution metrics
+- `V_TASK_HISTORY`: View over Snowflake's task execution history
+- Provides 7-day lookback for task monitoring
+
+### 10_cleanup.sql
+Demo cleanup and teardown:
+- Suspends and drops the task safely
+- Removes stored procedure and observability objects
+- Includes commented commands for data cleanup
+- Useful for development and testing cycles
+
+## ⚙️ Advanced Usage
+
+### Selective Execution
+
+Execute only specific SQL files using environment variables or CLI flags:
+
+```bash
+# Using environment variable
+ONLY=07_sp_customer_profile.sql python scripts/deploy.py
+
+# Using CLI flag
+python scripts/deploy.py --only 07_sp_customer_profile.sql
+
+# Dry run to preview statements
+DRY_RUN=1 python scripts/deploy.py
+python scripts/deploy.py --dry-run
+
+# Continue on errors (don't stop on first failure)
+STOP_ON_ERROR=0 python scripts/deploy.py
+```
+
+### Environment Variable Controls
+
+Set in `.env` file or environment:
+
+- `DRY_RUN=1`: Print statements without executing
+- `ONLY=filename.sql`: Execute only the specified file
+- `STOP_ON_ERROR=0`: Continue execution even if statements fail
+
+### Pipeline Management
+
+```sql
+-- Check what procedures exist
+SHOW PROCEDURES LIKE 'CREATE_CUSTOMER_PROFILE%';
+
+-- View task configuration
+DESC TASK CUSTOMER_PROFILE_TASK;
+
+-- Manual task execution (useful for testing)
+EXECUTE TASK CUSTOMER_PROFILE_TASK;
+
+-- Suspend task for maintenance
+ALTER TASK CUSTOMER_PROFILE_TASK SUSPEND;
+
+-- Change schedule (example: every 6 hours)
+ALTER TASK CUSTOMER_PROFILE_TASK SET SCHEDULE = 'USING CRON 0 */6 * * * UTC';
+```
+
 ## 🔒 Security Best Practices
 
-1. **Never commit credentials**: Keep `.env` file in `.gitignore`
+1. **Never commit credentials**: Keep `.env` file in `.gitignore` (already configured)
 2. **Use GitHub Secrets**: Store Snowflake credentials as encrypted secrets
 3. **Principle of Least Privilege**: Use dedicated service account with minimal required permissions
-4. **Role Hierarchy**: Follow Snowflake's recommended role hierarchy
-5. **Audit**: Regularly review access logs and granted privileges
+4. **Key-Pair Authentication**: Consider switching from password to key-pair authentication for production
+5. **Role Hierarchy**: Follow Snowflake's recommended role hierarchy
+6. **Audit**: Regularly review access logs and granted privileges
 
 ## 🧪 Testing
 
@@ -175,22 +314,41 @@ SHOW GRANTS TO ROLE DASHBOARD_ANALYST_ROLE;
 ### Common Issues
 
 1. **Authentication Failed**
-   - Verify your Snowflake account identifier format
-   - Check username and password
-   - Ensure the user has necessary privileges
+   - Verify your Snowflake account identifier format (e.g., `xy12345.eu-west-1`)
+   - Check username and password in GitHub Secrets or `.env` file
+   - Ensure the user has necessary privileges (SYSADMIN or higher recommended)
 
 2. **Sample Data Not Available**
-   - Verify `SNOWFLAKE_SAMPLE_DATA` database is accessible
+   - Verify `SNOWFLAKE_SAMPLE_DATA` database is accessible: `SHOW DATABASES LIKE 'SNOWFLAKE_SAMPLE_DATA';`
    - Contact your Snowflake administrator to enable sample data
+   - Check grants: `SHOW GRANTS TO ROLE IDENTIFIER(CURRENT_ROLE());`
 
-3. **Permission Denied**
-   - Ensure your user has `ACCOUNTADMIN` or `SYSADMIN` role
-   - Check if you have CREATE DATABASE and CREATE ROLE privileges
+3. **Permission Denied for Pipeline Objects**
+   - Ensure your user has `CREATE PROCEDURE`, `CREATE TASK` privileges
+   - Check if you can access Python packages: stored procedures need package access
+   - Verify warehouse permissions for task execution
 
 4. **GitHub Actions Workflow Fails**
-   - Verify all required secrets are configured
+   - Verify all required secrets are configured (see secrets list above)
    - Check workflow logs for specific error messages
-   - Ensure repository has Actions enabled
+   - Ensure repository has Actions enabled and workflows can access secrets
+
+5. **Task Not Running**
+   - Verify task is RESUMED: `SHOW TASKS LIKE 'CUSTOMER_PROFILE_TASK';`
+   - Check task history for errors: `SELECT * FROM V_TASK_HISTORY WHERE NAME = 'CUSTOMER_PROFILE_TASK';`
+   - Ensure EXECUTE TASK privilege: `GRANT EXECUTE TASK ON ACCOUNT TO ROLE IDENTIFIER(CURRENT_ROLE());`
+   - Verify serverless compute is available in your region
+
+6. **Stored Procedure Fails**
+   - Check Python package availability: ensure Snowpark-pandas is supported in your account
+   - Verify sample data access before running the procedure
+   - Test with smaller data sets first
+   - Check Snowflake query history for detailed error messages
+
+7. **Import Errors in Local Development**
+   - Install requirements: `pip install -r requirements.txt`
+   - Use virtual environment: `python -m venv .venv && source .venv/bin/activate`
+   - Check Python version compatibility (3.8+ required, 3.11 recommended)
 
 ## 📈 Usage Examples
 
@@ -239,27 +397,41 @@ For issues or questions:
 The deployment follows these steps:
 
 1. **Trigger**: Push to `main` branch or manual workflow dispatch
-2. **Checkout**: Code is checked out from the repository
-3. **Setup**: Python environment is configured
-4. **Install**: Dependencies are installed from `requirements.txt`
-5. **Deploy**: `scripts/deploy.py` executes SQL files in order:
-   - 01_schema.sql
-   - 02_tpch_views.sql
-   - 03_aggregations.sql
-   - 04_tasks.sql
-   - 05_grants.sql
-6. **Verify**: Deployment success or failure is reported
+2. **Checkout**: Code is checked out from the repository  
+3. **Setup**: Python 3.11 environment is configured
+4. **Install**: Dependencies are installed from `requirements.txt` (includes sqlparse for robust SQL parsing)
+5. **Deploy**: Hardened `scripts/deploy.py` executes SQL files in lexicographic order:
+   - 01_schema.sql (Database and schema setup)
+   - 02_tpch_views.sql (TPCH detail views)
+   - 03_aggregations.sql (KPI aggregations)
+   - 04_tasks.sql (Example scheduled tasks)
+   - 05_grants.sql (Security and RBAC)
+   - 06_pipeline_prereqs.sql (Sample data grants)
+   - 07_sp_customer_profile.sql (Snowpark-pandas stored procedure)
+   - 08_task_customer_profile.sql (Serverless task - created SUSPENDED)
+   - 09_observability.sql (Monitoring tables and views)
+   - 10_cleanup.sql (Demo teardown script)
+6. **Verify**: Deployment success with comprehensive logging and error handling
+
+The deployment script now includes:
+- Type hints and comprehensive error handling
+- Robust SQL statement parsing with sqlparse  
+- Support for dry-run, selective execution, and error handling modes
+- Detailed logging of each statement execution
 
 ## ⚙️ Customization
 
 ### Adding New SQL Files
 
-SQL files are executed in lexicographic order. To add new files:
+SQL files are executed in lexicographic order (01, 02, ..., 10, ...). To add new files:
 
-1. Create a new file in `sql/` directory with a numeric prefix (e.g., `06_custom.sql`)
-2. Ensure the file has proper USE DATABASE/SCHEMA statements
-3. Test locally before committing
-4. Push to trigger automatic deployment
+1. Create a new file in `sql/` directory with appropriate numeric prefix (e.g., `11_custom_views.sql`)
+2. Ensure the file works with the current database/schema context
+3. Test locally with dry run: `python scripts/deploy.py --only 11_custom_views.sql --dry-run`
+4. Test actual execution: `python scripts/deploy.py --only 11_custom_views.sql`
+5. Commit and push to trigger automatic deployment
+
+**Note**: Files 06-10 contain the new pipeline components. Add custom files with prefixes 11+ to maintain execution order.
 
 ### Modifying Aggregations
 
