@@ -7,6 +7,7 @@ Requires environment variables or .env file with Snowflake credentials.
 """
 
 import argparse
+import getpass
 import logging
 import os
 import re
@@ -48,14 +49,20 @@ def parse_args() -> argparse.Namespace:
         action='store_true',
         help='Stop immediately on first error'
     )
+    parser.add_argument(
+        '--prompt-password',
+        action='store_true',
+        help='Prompt for password securely instead of using environment variable'
+    )
     return parser.parse_args()
 
 
-def get_connection_params() -> Dict[str, str]:
+def get_connection_params(prompt_password: bool = False) -> Dict[str, str]:
     """Get Snowflake connection parameters from environment variables."""
     load_dotenv()
     
-    required_params = ['SNOW_ACCOUNT', 'SNOW_USER', 'SNOW_PASSWORD']
+    # Check for required base parameters
+    required_params = ['SNOW_ACCOUNT', 'SNOW_USER']
     missing_params = [p for p in required_params if not os.getenv(p)]
     
     if missing_params:
@@ -66,8 +73,26 @@ def get_connection_params() -> Dict[str, str]:
     params = {
         'account': os.getenv('SNOW_ACCOUNT'),
         'user': os.getenv('SNOW_USER'),
-        'password': os.getenv('SNOW_PASSWORD'),
     }
+    
+    # Handle authentication method
+    authenticator = os.getenv('SNOW_AUTHENTICATOR', 'snowflake')
+    if authenticator == 'externalbrowser':
+        params['authenticator'] = 'externalbrowser'
+    else:
+        # Password authentication
+        if prompt_password:
+            password = getpass.getpass("Enter your Snowflake password: ")
+            if not password.strip():
+                logging.error("Password cannot be empty")
+                sys.exit(1)
+        else:
+            password = os.getenv('SNOW_PASSWORD')
+            if not password:
+                logging.error("SNOW_PASSWORD is required when not using external browser authentication")
+                logging.error("Use --prompt-password to enter password securely")
+                sys.exit(1)
+        params['password'] = password
     
     # Optional parameters
     if os.getenv('SNOW_ROLE'):
@@ -229,7 +254,7 @@ def main() -> None:
     
     # Get connection parameters
     logging.info("\nValidating connection parameters...")
-    conn_params = get_connection_params()
+    conn_params = get_connection_params(args.prompt_password)
     
     # Mask password in display
     display_params = conn_params.copy()

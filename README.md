@@ -41,7 +41,7 @@ This repository provides a **complete, production-ready Snowflake analytics solu
 
 ### **What This Project Delivers:**
 
-🏢 **Enterprise-Grade SQL Dashboards** - Pre-built analytical views and KPIs for TPCH data  
+🏢 **Enterprise-Grade SQL Dashboards** - Pre-built analytical views and KPIs for TPCH data.  
 🤖 **Automated CI/CD Pipeline** - Zero-touch deployments with GitHub Actions  
 🐍 **Modern Data Pipeline** - Snowpark-pandas stored procedures with serverless tasks  
 📊 **Comprehensive Monitoring** - Pipeline health tracking and observability  
