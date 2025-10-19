@@ -1,0 +1,111 @@
+{
+  "name": "Snowflake Analytics - Power BI Connection",
+  "description": "Enterprise Snowflake analytics platform connection for Power BI",
+  "version": "1.0.0",
+  "connections": {
+    "primary": {
+      "server": "JHYWOUK-WA83239.snowflakecomputing.com",
+      "database": "TPCH_DASHBOARDS",
+      "schema": "PUBLIC",
+      "warehouse": "COMPUTE_WH",
+      "role": "DASHBOARD_ANALYST_ROLE",
+      "authentication": "snowflake",
+      "connection_timeout": 30,
+      "query_timeout": 300
+    }
+  },
+  "recommended_tables": [
+    {
+      "name": "CUSTOMER_LINEITEM_PROFILE",
+      "type": "fact_table",
+      "records": "4,522,722",
+      "description": "Main customer order profile fact table",
+      "use_case": "Detailed analytics, customer behavior, order patterns"
+    },
+    {
+      "name": "V_CUSTOMER_DETAILS",
+      "type": "dimension_view",
+      "description": "Customer demographics and summary metrics",
+      "use_case": "Customer segmentation, demographic analysis"
+    },
+    {
+      "name": "V_ORDER_DETAILS",
+      "type": "fact_view",
+      "description": "Order transaction details and metrics",
+      "use_case": "Sales performance, order trends, revenue analysis"
+    },
+    {
+      "name": "V_MONTHLY_REVENUE_BY_REGION",
+      "type": "aggregated_view",
+      "description": "Pre-aggregated regional revenue data",
+      "use_case": "Geographic performance, regional comparisons"
+    },
+    {
+      "name": "V_MARKET_SEGMENT_ANALYSIS",
+      "type": "analytical_view",
+      "description": "Market segment performance metrics",
+      "use_case": "Market analysis, segment comparison, strategy planning"
+    }
+  ],
+  "dashboard_templates": {
+    "executive_summary": {
+      "title": "Executive Dashboard",
+      "primary_tables": ["V_CUSTOMER_DETAILS", "V_ORDER_DETAILS"],
+      "key_metrics": ["Total Revenue", "Customer Count", "Average Order Value", "Regional Performance"],
+      "visualizations": ["KPI Cards", "Revenue Trends", "Geographic Map", "Top Customers"]
+    },
+    "sales_performance": {
+      "title": "Sales Performance Dashboard",
+      "primary_tables": ["V_MONTHLY_REVENUE_BY_REGION", "CUSTOMER_LINEITEM_PROFILE"],
+      "key_metrics": ["Monthly Revenue", "Sales Growth", "Regional Performance", "Product Mix"],
+      "visualizations": ["Line Charts", "Bar Charts", "Heat Maps", "Trend Analysis"]
+    },
+    "customer_analytics": {
+      "title": "Customer Analytics Dashboard",
+      "primary_tables": ["V_MARKET_SEGMENT_ANALYSIS", "V_CUSTOMER_DETAILS"],
+      "key_metrics": ["Customer Segments", "Lifetime Value", "Purchase Patterns", "Retention"],
+      "visualizations": ["Segmentation Charts", "Customer Journey", "Cohort Analysis", "RFM Analysis"]
+    }
+  },
+  "performance_settings": {
+    "import_mode": {
+      "recommended_for": "Regular reporting, historical analysis",
+      "refresh_frequency": "Daily",
+      "data_size_limit": "1GB",
+      "advantages": ["Fast query performance", "Offline access", "Advanced DAX calculations"]
+    },
+    "directquery_mode": {
+      "recommended_for": "Real-time analysis, large datasets",
+      "refresh_frequency": "Real-time",
+      "data_size_limit": "Unlimited",
+      "advantages": ["Real-time data", "No storage limits", "Always current"]
+    },
+    "composite_mode": {
+      "recommended_for": "Mixed requirements",
+      "strategy": "Import aggregations, DirectQuery for details",
+      "advantages": ["Best of both worlds", "Optimized performance", "Flexible analysis"]
+    }
+  },
+  "sample_dax_measures": {
+    "total_revenue": "Total Revenue = SUM(CUSTOMER_LINEITEM_PROFILE[PRICE_AFTER_DISCOUNT])",
+    "customer_count": "Customer Count = DISTINCTCOUNT(CUSTOMER_LINEITEM_PROFILE[O_CUSTKEY])",
+    "average_order_value": "Average Order Value = DIVIDE([Total Revenue], [Order Count])",
+    "revenue_growth": "Revenue Growth % = DIVIDE([Total Revenue] - [Previous Month Revenue], [Previous Month Revenue])",
+    "top_customer_pct": "Top 20% Customer Revenue = CALCULATE([Total Revenue], TOPN(0.2 * [Customer Count], ALL(CUSTOMER_LINEITEM_PROFILE[O_CUSTKEY]), [Total Revenue]))"
+  },
+  "security_configuration": {
+    "row_level_security": {
+      "enabled": false,
+      "note": "Can be implemented using Snowflake roles and Power BI RLS"
+    },
+    "data_encryption": {
+      "in_transit": true,
+      "at_rest": true,
+      "note": "Snowflake provides end-to-end encryption"
+    },
+    "authentication": {
+      "methods": ["Snowflake Native", "SSO", "Multi-Factor"],
+      "recommended": "Snowflake Native with MFA"
+    }
+  }
+}

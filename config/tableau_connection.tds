@@ -1,0 +1,106 @@
+# Tableau Connection Configuration
+# Save as Snowflake_Analytics.tds for easy connection sharing
+
+<?xml version='1.0' encoding='utf-8' ?>
+<datasource formatted-name='Snowflake Analytics Platform' inline='true' source-platform='win' version='18.1' xmlns:user='http://www.tableausoftware.com/xml/user'>
+  <document-format-change-manifest>
+    <_.fcp.ObjectModelTableType.true...ObjectModelTableType />
+    <_.fcp.SchemaViewerObjectModel.true...SchemaViewerObjectModel />
+  </document-format-change-manifest>
+  
+  <connection class='snowflake' odbc-native-protocol='' schema='PUBLIC' server='JHYWOUK-WA83239.snowflakecomputing.com' service='' username='ALGORYTHMOS' warehouse='COMPUTE_WH'>
+    <connection-customization class='snowflake' enabled='false' version='18.1'>
+      <vendor name='snowflake' />
+      <driver name='snowflake' />
+      <customizations>
+        <customization name='CAP_CREATE_TEMP_TABLES' value='yes' />
+        <customization name='CAP_ISOLATION_LEVEL_SERIALIZABLE' value='yes' />
+        <customization name='CAP_SUPPRESS_DISCOVERY_QUERIES' value='yes' />
+        <customization name='CAP_CONNECT_STORED_PROCEDURE' value='yes' />
+      </customizations>
+    </connection-customization>
+    
+    <metadata-records>
+      <!-- Customer Profile Fact Table -->
+      <metadata-record class='table'>
+        <remote-name>CUSTOMER_LINEITEM_PROFILE</remote-name>
+        <remote-type>TABLE</remote-type>
+        <local-name>[CUSTOMER_LINEITEM_PROFILE]</local-name>
+        <parent-name>[PUBLIC]</parent-name>
+        <local-type>table</local-type>
+        <aggregation>Table</aggregation>
+        <contains-null>true</contains-null>
+        <attributes>
+          <attribute datatype='integer' name='[O_CUSTKEY]' role='dimension' type='quantitative' />
+          <attribute datatype='integer' name='[O_ORDERKEY]' role='dimension' type='quantitative' />
+          <attribute datatype='date' name='[O_ORDERDATE]' role='dimension' type='quantitative' />
+          <attribute datatype='real' name='[PRICE_AFTER_DISCOUNT]' role='measure' type='quantitative' />
+          <attribute datatype='real' name='[PRICE_PER_QTY]' role='measure' type='quantitative' />
+          <attribute datatype='string' name='[N_NAME]' role='dimension' type='nominal' />
+          <attribute datatype='string' name='[C_MKTSEGMENT]' role='dimension' type='nominal' />
+        </attributes>
+      </metadata-record>
+      
+      <!-- Customer Details View -->
+      <metadata-record class='table'>
+        <remote-name>V_CUSTOMER_DETAILS</remote-name>
+        <remote-type>VIEW</remote-type>
+        <local-name>[V_CUSTOMER_DETAILS]</local-name>
+        <parent-name>[PUBLIC]</parent-name>
+        <local-type>table</local-type>
+        <aggregation>Table</aggregation>
+        <contains-null>true</contains-null>
+      </metadata-record>
+      
+      <!-- Order Details View -->
+      <metadata-record class='table'>
+        <remote-name>V_ORDER_DETAILS</remote-name>
+        <remote-type>VIEW</remote-type>
+        <local-name>[V_ORDER_DETAILS]</local-name>
+        <parent-name>[PUBLIC]</parent-name>
+        <local-type>table</local-type>
+        <aggregation>Table</aggregation>
+        <contains-null>true</contains-null>
+      </metadata-record>
+      
+      <!-- Regional Revenue View -->
+      <metadata-record class='table'>
+        <remote-name>V_MONTHLY_REVENUE_BY_REGION</remote-name>
+        <remote-type>VIEW</remote-type>
+        <local-name>[V_MONTHLY_REVENUE_BY_REGION]</local-name>
+        <parent-name>[PUBLIC]</parent-name>
+        <local-type>table</local-type>
+        <aggregation>Table</aggregation>
+        <contains-null>true</contains-null>
+      </metadata-record>
+      
+      <!-- Market Segment Analysis View -->
+      <metadata-record class='table'>
+        <remote-name>V_MARKET_SEGMENT_ANALYSIS</remote-name>
+        <remote-type>VIEW</remote-type>
+        <local-name>[V_MARKET_SEGMENT_ANALYSIS]</local-name>
+        <parent-name>[PUBLIC]</parent-name>
+        <local-type>table</local-type>
+        <aggregation>Table</aggregation>
+        <contains-null>true</contains-null>
+      </metadata-record>
+    </metadata-records>
+  </connection>
+  
+  <aliases enabled='yes' />
+  <column datatype='integer' name='[Number of Records]' role='measure' type='quantitative' user:auto-column='numrec'>
+    <calculation class='tableau' formula='1' />
+  </column>
+  
+  <layout _.fcp.SchemaViewerObjectModel.false...dim-percentage='0.5' _.fcp.SchemaViewerObjectModel.false...measure-percentage='0.4' dim-ordering='alphabetic' measure-ordering='alphabetic' show-structure='true' />
+  
+  <semantic-values>
+    <semantic-value key='[Country].[Name]' value='&quot;United States&quot;' />
+  </semantic-values>
+  
+  <_.fcp.ObjectModelTableType.true...column caption='Customer Key' datatype='integer' name='[O_CUSTKEY]' role='dimension' type='quantitative' />
+  <_.fcp.ObjectModelTableType.true...column caption='Order Date' datatype='date' name='[O_ORDERDATE]' role='dimension' type='quantitative' />
+  <_.fcp.ObjectModelTableType.true...column caption='Revenue' datatype='real' name='[PRICE_AFTER_DISCOUNT]' role='measure' type='quantitative' />
+  <_.fcp.ObjectModelTableType.true...column caption='Region' datatype='string' name='[N_NAME]' role='dimension' type='nominal' />
+  <_.fcp.ObjectModelTableType.true...column caption='Market Segment' datatype='string' name='[C_MKTSEGMENT]' role='dimension' type='nominal' />
+</datasource>
