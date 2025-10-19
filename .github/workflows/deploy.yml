@@ -31,6 +31,20 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
       
+      - name: Debug Environment
+        env:
+          SNOW_ACCOUNT: ${{ secrets.SNOW_ACCOUNT }}
+          SNOW_USER: ${{ secrets.SNOW_USER }}
+          SNOW_PASSWORD: ${{ secrets.SNOW_PASSWORD }}
+          SNOW_ROLE: ${{ secrets.SNOW_ROLE }}
+          SNOW_WAREHOUSE: ${{ secrets.SNOW_WAREHOUSE }}
+          SNOW_DATABASE: ${{ secrets.SNOW_DATABASE }}
+          SNOW_SCHEMA: ${{ secrets.SNOW_SCHEMA }}
+          STOP_ON_ERROR: 1
+        run: |
+          echo "🔍 Debugging GitHub Actions environment..."
+          python debug_environment.py
+      
       - name: Deploy to Snowflake
         env:
           SNOW_ACCOUNT: ${{ secrets.SNOW_ACCOUNT }}
