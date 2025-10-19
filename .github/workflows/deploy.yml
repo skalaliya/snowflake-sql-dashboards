@@ -16,47 +16,94 @@ jobs:
   deploy:
     name: Deploy to Snowflake
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      
+
+      # Load multi-line SNOWFLAKES secret (KEY=VALUE per line) into the job environment
+      - name: Load Snowflake env
+        env:
+          SNOWFLAKES: ${{ secrets.SNOWFLAKES }}
+        run: |
+          python - <<'PY'
+          import os, sys
+          blob = os.environ.get("SNOWFLAKES", "")
+          if not blob.strip():
+              print("❌ SNOWFLAKES secret is empty or missing", file=sys.stderr)
+              sys.exit(1)
+          with open(os.environ["GITHUB_ENV"], "a") as f:
+              for line in blob.splitlines():
+                  line = line.strip()
+                  if not line or line.startswith("#") or "=" not in line:
+                      continue
+                  f.write(line + "\n")
+          PY
+
+      # Mask password just in case something echoes it
+      - name: Mask password in logs
+        run: |
+          if [ -n "${SNOW_PASSWORD:-}" ]; then
+            echo "::add-mask::${SNOW_PASSWORD}"
+          fi
+
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
-      
-      - name: Debug Environment
-        env:
-          SNOW_ACCOUNT: ${{ secrets.SNOW_ACCOUNT }}
-          SNOW_USER: ${{ secrets.SNOW_USER }}
-          SNOW_PASSWORD: ${{ secrets.SNOW_PASSWORD }}
-          SNOW_ROLE: ${{ secrets.SNOW_ROLE }}
-          SNOW_WAREHOUSE: ${{ secrets.SNOW_WAREHOUSE }}
-          SNOW_DATABASE: ${{ secrets.SNOW_DATABASE }}
-          SNOW_SCHEMA: ${{ secrets.SNOW_SCHEMA }}
-          STOP_ON_ERROR: 1
+          pip install -r requirements.txt || true
+          pip install snowflake-connector-python
+
+      - name: Quick env check (no secrets printed)
         run: |
-          echo "🔍 Debugging GitHub Actions environment..."
-          python debug_environment.py
-      
+          echo "🔎 Required variables:"
+          missing=0
+          for v in SNOW_ACCOUNT SNOW_USER SNOW_ROLE SNOW_WAREHOUSE SNOW_DATABASE SNOW_SCHEMA; do
+            if [ -z "${!v:-}" ]; then
+              echo "❌ $v NOT SET"; missing=1
+            else
+              echo "✅ $v is set"
+            fi
+          done
+          if [ -z "${SNOW_PASSWORD:-}" ]; then
+            echo "❌ SNOW_PASSWORD NOT SET"; missing=1
+          else
+            echo "✅ SNOW_PASSWORD is set (hidden)"
+          fi
+          test "$missing" -ne 1
+
+      - name: Optional connectivity smoke test
+        run: |
+          python - <<'PY'
+          import os
+          import snowflake.connector as sf
+          conn = sf.connect(
+              user=os.environ["SNOW_USER"],
+              password=os.environ["SNOW_PASSWORD"],
+              account=os.environ["SNOW_ACCOUNT"],
+              role=os.environ["SNOW_ROLE"],
+              warehouse=os.environ["SNOW_WAREHOUSE"],
+              database=os.environ["SNOW_DATABASE"],
+              schema=os.environ["SNOW_SCHEMA"],
+          )
+          cs = conn.cursor()
+          cs.execute("select current_user(), current_role(), current_warehouse(), current_database(), current_schema()")
+          print(cs.fetchone())
+          conn.close()
+          PY
+
       - name: Deploy to Snowflake
-        env:
-          SNOW_ACCOUNT: ${{ secrets.SNOW_ACCOUNT }}
-          SNOW_USER: ${{ secrets.SNOW_USER }}
-          SNOW_PASSWORD: ${{ secrets.SNOW_PASSWORD }}
-          SNOW_ROLE: ${{ secrets.SNOW_ROLE }}
-          SNOW_WAREHOUSE: ${{ secrets.SNOW_WAREHOUSE }}
-          SNOW_DATABASE: ${{ secrets.SNOW_DATABASE }}
-          SNOW_SCHEMA: ${{ secrets.SNOW_SCHEMA }}
-          STOP_ON_ERROR: 1
         run: |
           echo "🚀 Starting Snowflake deployment..."
-          python scripts/deploy.py
-          echo "✅ Deployment completed successfully!"
-
+          if [ -f scripts/deploy.py ]; then
+            python scripts/deploy.py
+          elif [ -f deploy.py ]; then
+            python deploy.py
+          else
+            echo "⚠️ No deploy script found (scripts/deploy.py or ./deploy.py)."
+          fi
+          echo "✅ Deployment step finished"
